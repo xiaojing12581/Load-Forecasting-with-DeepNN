@@ -50,13 +50,13 @@ def main(args):
     
     
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()#创建解析器对象add_argument添加程序参数信息
     parser.add_argument("--data_from", type=str, default="SPAIN", help="Name of the country which dataset comes from")
     parser.add_argument("--model_name", type=str, default='custom', help="One of 'custom', 'seqmlp', 'deepenergy' ")
     parser.add_argument("--epochs", type=int, default=150, help="Number of times the entire dataset will be seen in training.")
     parser.add_argument("--input_n", type=int, default=24, help="Number of input time sequence. Default to 24h")
     parser.add_argument("--output_n", type=int, default=24, help="Number of output time sequence. Default to 24h")
-    args = parser.parse_args()
+    args = parser.parse_args()#解析参数
         
     main(args)
     
