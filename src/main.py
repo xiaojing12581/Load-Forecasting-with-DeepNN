@@ -21,7 +21,7 @@ def main(args):
         df = "../data/demand_df_spain.csv"
         holidays_ = holidays.ESP()
         
-        
+    #函数get_pd_dataset：读取数据、数据预处理、提取特征、数据归一化、划分数据集    
     train_df, test_df, [load_min, load_max] = get_pd_dataset(df, args.data_from, holidays_, IS_CUSTOM)
     train_x, train_y, test_x, test_y = get_np_dataset(train_df, test_df, IS_CUSTOM)
     train_dataset = get_tf_dataset(train_x, train_y, args.input_n)
