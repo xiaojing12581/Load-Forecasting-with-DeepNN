@@ -115,15 +115,15 @@ def get_np_dataset(train_df, test_df, is_custom=True):#pandas类型的的df数�
 
 
 def get_tf_dataset(x, y, input_n=24, output_n=24, batch_size=16):#转换为dataset类型（tensor类型）
-    def fix_output_length(features, targets):
+    def fix_output_length(features, targets):#？不懂
         targets = targets[:output_n]
         return features, targets
     
     
     features = tf.data.Dataset.from_tensor_slices(x)#数据切片，numpy数据转换为tensor数据
-    #用.window方法将原数据扩展成应有的元素,drop_remainder用来忽略最后不整齐的.窗口大小为input_n=24，每片24个（0-23、1-24、2-24。。。）
-    #批处理flat_map，将长数据列分成一个个window（每input_n个）用[]括起来。他的这个window是包括lable的，可以shuffle
-    #x.batch(input_n) -> x每input_n分一批[]括起来
+    #用.window方法将原数据扩展成应有的元素,drop_remainder用来忽略最后不整齐的.窗口大小为input_n=24，每片24个（[0]-[23]、[1]-[24]、[2]-[24]。。。）
+    #批处理flat_map，将长数据列分成一个个window（每input_n个）用[]([[0]-[23]]、[[1]-[24]]...)括起来。他的这个window是包括lable的，可以shuffle
+    #x.batch(input_n) -> x每input_n分一批[]([[0]-[23]]、[[1]-[24]]...)括起来
     features = features.window(input_n, shift=1, stride=1, drop_remainder=True).flat_map(lambda x: x.batch(input_n))
     targets = tf.data.Dataset.from_tensor_slices(y)
     targets = targets.window(input_n, shift=1, stride=1, drop_remainder=True).flat_map(lambda x: x.batch(input_n))
