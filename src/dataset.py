@@ -60,7 +60,7 @@ def extract_features(df, data_from, holidays):#提取特征
     return train_df
 
 
-def normalize_df(train_df, is_custom):
+def normalize_df(train_df, is_custom):#数据归一化
     load_min = train_df["total_load_actual"].min()
     load_max = train_df["total_load_actual"].max()
     if is_custom:#标准化
