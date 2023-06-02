@@ -37,19 +37,25 @@ def extract_features(df, data_from, holidays):#提取特征
     train_df = pd.DataFrame()
     train_df["total_load_actual"] = df["total_load_actual"]
     train_df["time"] = df["time"]
-    train_df["day_of_week"] = [pd.Timestamp(t).day_of_week for t in train_df["time"].to_list()]
-    train_df["day_of_year"] = [pd.Timestamp(t).day_of_year-1 for t in train_df["time"].to_list()]
-    train_df["hour"] = [pd.Timestamp(t).hour for t in train_df["time"].to_list()]
-    train_df["month_of_year"] = [int(t.split(" ")[0].split("-")[1])-1 for t in train_df["time"].to_list()]
+    #pd.Timestamp(t).day_of_week属性返回给定Timestamp对象中星期几的值。日期从0到6编号，其中0是星期一，6是星期日。
+    train_df["day_of_week"] = [pd.Timestamp(t).day_of_week for t in train_df["time"].to_list()]#星期列
+    train_df["day_of_year"] = [pd.Timestamp(t).day_of_year-1 for t in train_df["time"].to_list()]#年减1列
+    train_df["hour"] = [pd.Timestamp(t).hour for t in train_df["time"].to_list()]#小时列
+    #split("-")[1]，-分割，取索引1的值
+    train_df["month_of_year"] = [int(t.split(" ")[0].split("-")[1])-1 for t in train_df["time"].to_list()]#月份减1列
     ###
-    train_df["quarter"] = [pd.Timestamp(t).quarter for t in train_df["time"].to_list()]
-    train_df["day_of_month"] = [pd.Timestamp(t).day for t in train_df["time"].to_list()]
+    train_df["quarter"] = [pd.Timestamp(t).quarter for t in train_df["time"].to_list()]#季度列（4个季度）
+    train_df["day_of_month"] = [pd.Timestamp(t).day for t in train_df["time"].to_list()]#天列
+    #两个数据的节假日、法定假日
     if data_from=="TURKEY":
         train_df["is_holiday"] = [int(t in holidays or t[:10] in ramadan_n_sacrifice) for t in train_df["time"].to_list()]
     elif data_from=="SPAIN":
         train_df["is_holiday"] = [int(t in holidays) for t in train_df["time"].to_list()]
+    #假期周六日
     train_df["is_holiday"] = [int(train_df["is_holiday"].iloc[i] or ((train_df["day_of_week"].iloc[i]%5==0 or train_df["day_of_week"].iloc[i]%6==0) and train_df["day_of_week"].iloc[i]!=0)) for i in range(len(train_df))]
+    #三天的均值
     train_df["mean_last_3"] = [(train_df["total_load_actual"].iloc[i-24]+train_df["total_load_actual"].iloc[i-48]+train_df["total_load_actual"].iloc[i-72])/3 if i>72 else 0 for i in range(len(train_df["total_load_actual"]))]
+    #工作？
     train_df["holiday_to_work"] = [int((train_df["is_holiday"].iloc[i-1]-train_df["is_holiday"].iloc[i])==1) if i>0 else 0 for i in range(len(train_df))]
     return train_df
 
