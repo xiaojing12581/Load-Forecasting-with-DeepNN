@@ -63,12 +63,13 @@ def extract_features(df, data_from, holidays):#提取特征
 def normalize_df(train_df, is_custom):
     load_min = train_df["total_load_actual"].min()
     load_max = train_df["total_load_actual"].max()
-    if is_custom:
+    if is_custom:#标准化
         train_df["total_load_actual"] = (train_df["total_load_actual"]-load_min)/(load_max-load_min)
     else:
         base_features = ["total_load_actual", "month_of_year", "day_of_week", "hour",
                          "is_holiday", "mean_last_3", "holiday_to_work"]
-        scaler = MinMaxScaler()
+        scaler = MinMaxScaler()#自动归一化
+        #归一化到指定区间scaler.fit_transform(train_df[base_features])
         train_df[base_features] = scaler.fit_transform(train_df[base_features])
     return train_df, load_min, load_max
 
