@@ -74,24 +74,27 @@ def normalize_df(train_df, is_custom):#数据归一化
     return train_df, load_min, load_max
 
 
-def split_df(train_df, data_from="SPAIN", input_n=24, output_n=24):
-    input_n, output_n = 24, 24
-    non_seq_input_n = 14
+def split_df(train_df, data_from="SPAIN", input_n=24, output_n=24):#划分数据集
+    input_n, output_n = 24, 24 #1天=24小时
+    non_seq_input_n = 14 #非序列输入？
 
+    #将负荷值向前移动output_n次，以使用过去的负荷值作为特征。
     # Shifting load values by output_n times forward to use past time load values as features.
-    train_df["target"] = train_df["total_load_actual"]
-    train_df["total_load_previous"] = train_df["target"].shift(output_n)
-    train_df["total_load_1_week"] = train_df["target"].shift(output_n*7)
+    train_df["target"] = train_df["total_load_actual"]#真实目标负荷值
+    #df.shift (periods= 1, freq= None, axis= 0 ) periods 偏移的幅度（正值表示下、右编译，负值表示上、左偏移）
+    train_df["total_load_previous"] = train_df["target"].shift(output_n)#过去负荷值
+    train_df["total_load_1_week"] = train_df["target"].shift(output_n*7)#过去1周负荷值
 
 
     if data_from=="TURKEY":
+        #使用2018年之前的数据进行训练。其余的将等待验证
         # Using the data until 2018 for training. Rest will be held for validation
         test_df = train_df[train_df["time"]>"2019"].copy()
-        test_df = test_df[test_df["time"]<"2022"].copy()
-        train_df = train_df[train_df["time"]<"2019"].iloc[output_n*non_seq_input_n:]
+        test_df = test_df[test_df["time"]<"2022"].copy()#test_df=2020到2021
+        train_df = train_df[train_df["time"]<"2019"].iloc[output_n*non_seq_input_n:]#train_df=2018年之前，336行至最后
     elif data_from=="SPAIN":
-        test_df = train_df[train_df["time"]>"2018"].copy()
-        train_df = train_df[train_df["time"]<"2018"].iloc[output_n*non_seq_input_n:]
+        test_df = train_df[train_df["time"]>"2018"].copy()#test_df=2019年及之后
+        train_df = train_df[train_df["time"]<"2018"].iloc[output_n*non_seq_input_n:]#train_df=2017年及之前
     return train_df, test_df
 
 
@@ -130,9 +133,9 @@ def get_tf_dataset(x, y, input_n=24, output_n=24, batch_size=16):
 def get_pd_dataset(df, data_from, holidays, is_custom):
     energy_df = read_dataset(df, data_from)#读取数据
     energy_df = handle_missing_vals(energy_df)#数据预处理
-    train_df = extract_features(energy_df, data_from, holidays)
-    train_df, load_min, load_max = normalize_df(train_df, is_custom)
-    train_df, test_df = split_df(train_df, data_from)
+    train_df = extract_features(energy_df, data_from, holidays)#提取特征
+    train_df, load_min, load_max = normalize_df(train_df, is_custom)#数据归一化
+    train_df, test_df = split_df(train_df, data_from)#划分数据集为训练测试集
     return train_df, test_df, [load_min, load_max]
 
 
