@@ -26,9 +26,10 @@ def read_dataset(df_path, data_from):
 
 
 def handle_missing_vals(energy_df):
-    energy_df["total_load_actual"].fillna(method="backfill", inplace=True)
+    energy_df["total_load_actual"].fillna(method="backfill", inplace=True)#fillna用backfill方法直接填充
     energy_df[energy_df["total_load_actual"]==0] = np.nan
     energy_df["total_load_actual"] = energy_df["total_load_actual"].backfill()
+    #loc函数：通过行索引 "Index" 中的具体值来取行数据（如取"Index"为"A"的行）iloc函数：通过行号来取行数据（如取第二行的数据）
     energy_df.loc[energy_df["time"].isnull()==True,"time"] = energy_df.iloc[2089]["time"]
     return energy_df
 
