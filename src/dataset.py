@@ -121,8 +121,8 @@ def get_tf_dataset(x, y, input_n=24, output_n=24, batch_size=16):
 
 
 def get_pd_dataset(df, data_from, holidays, is_custom):
-    energy_df = read_dataset(df, data_from)
-    energy_df = handle_missing_vals(energy_df)
+    energy_df = read_dataset(df, data_from)#读取数据
+    energy_df = handle_missing_vals(energy_df)#数据预处理
     train_df = extract_features(energy_df, data_from, holidays)
     train_df, load_min, load_max = normalize_df(train_df, is_custom)
     train_df, test_df = split_df(train_df, data_from)
