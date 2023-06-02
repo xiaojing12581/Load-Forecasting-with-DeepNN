@@ -25,6 +25,7 @@ def main(args):
     train_df, test_df, [load_min, load_max] = get_pd_dataset(df, args.data_from, holidays_, IS_CUSTOM)
     #函数get_np_dataset：返回np类型的train_x, train_y, test_x, test_y
     train_x, train_y, test_x, test_y = get_np_dataset(train_df, test_df, IS_CUSTOM)
+    #函数get_tf_dataset：返回tensor类型的train_dataset、test_dataset
     train_dataset = get_tf_dataset(train_x, train_y, args.input_n)
     test_dataset = get_tf_dataset(test_x, test_y, args.input_n)
 
