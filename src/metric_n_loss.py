@@ -8,22 +8,22 @@ import numpy as np
 
 
 
-def unnormalize(x, load_min, load_max):
+def unnormalize(x, load_min, load_max):#反归一化
     return load_min + x * (load_max - load_min)
     
-def get_unnormalized_rmse(load_min, load_max):
+def get_unnormalized_rmse(load_min, load_max):#求均方根误差
     def rmse(y_true, y_pred):
-        y_true = unnormalize(y_true, load_min, load_max)
+        y_true = unnormalize(y_true, load_min, load_max)#反归一化
         y_pred = unnormalize(y_pred, load_min, load_max)
         return tf.math.sqrt(tf.reduce_mean((y_true - y_pred)**2))
     return rmse
     
 
-def mape(y_true, y_pred):
+def mape(y_true, y_pred):#求平均绝对百分比误差
     return tf.reduce_mean(tf.math.abs((y_pred - y_true)) / y_true * 100)
 
 
-def get_unnormalized_mape(load_min, load_max):
+def get_unnormalized_mape(load_min, load_max):#求平均绝对百分比误差
     def unnormalized_mape(y_true, y_pred):
         y_true = unnormalize(y_true, load_min, load_max)
         y_pred = unnormalize(y_pred, load_min, load_max)
@@ -31,7 +31,7 @@ def get_unnormalized_mape(load_min, load_max):
     return unnormalized_mape
 
 
-def mae(y_true, y_pred):
+def mae(y_true, y_pred):#求平均绝对误差
     y_true = y_true[0]
     loss = tf.math.reduce_mean(tf.math.abs(y_true - y_pred))
     return loss
