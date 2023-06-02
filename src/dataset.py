@@ -98,7 +98,7 @@ def split_df(train_df, data_from="SPAIN", input_n=24, output_n=24):#划分数据
     return train_df, test_df
 
 
-def get_np_dataset(train_df, test_df, is_custom=True):
+def get_np_dataset(train_df, test_df, is_custom=True):#pandas类型的的df数据转换为numpy类型的np数据
     if not is_custom:
         base_features = ["total_load_previous", "month_of_year", "day_of_week", "hour",
                          "total_load_1_week", "is_holiday", "mean_last_3", "holiday_to_work"]
@@ -110,7 +110,7 @@ def get_np_dataset(train_df, test_df, is_custom=True):
     train_y = train_df[["target"]].to_numpy()
 
     test_x = test_df[base_features].to_numpy()
-    test_y = test_df[["target"]].to_numpy()
+    test_y = test_df[["target"]].to_numpy()#[["target"]]二维？
     return train_x, train_y, test_x, test_y
 
 
