@@ -18,14 +18,14 @@ ramadan_n_sacrifice = ["2016-07-05", "2016-07-06", "2016-07-07", "2016-07-08",
                        "2021-07-19", "2021-07-20", "2021-07-21", "2021-07-22", "2021-07-23"]
 
 
-def read_dataset(df_path, data_from):
+def read_dataset(df_path, data_from):#读取数据
     energy_df = pd.read_csv(df_path)
     if data_from=="SPAIN":
         energy_df.rename(columns={"total load actual":"total_load_actual"}, inplace=True)
     return energy_df
 
 
-def handle_missing_vals(energy_df):
+def handle_missing_vals(energy_df):#处理缺失值
     energy_df["total_load_actual"].fillna(method="backfill", inplace=True)#fillna用backfill方法直接填充
     energy_df[energy_df["total_load_actual"]==0] = np.nan
     energy_df["total_load_actual"] = energy_df["total_load_actual"].backfill()
@@ -33,7 +33,7 @@ def handle_missing_vals(energy_df):
     energy_df.loc[energy_df["time"].isnull()==True,"time"] = energy_df.iloc[2089]["time"]
     return energy_df
 
-def extract_features(df, data_from, holidays):
+def extract_features(df, data_from, holidays):#提取特征
     train_df = pd.DataFrame()
     train_df["total_load_actual"] = df["total_load_actual"]
     train_df["time"] = df["time"]
