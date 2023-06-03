@@ -30,7 +30,7 @@ def main(args):
     test_dataset = get_tf_dataset(test_x, test_y, args.input_n)
 
     mape, rmse = get_unnormalized_mape(load_min, load_max), get_unnormalized_rmse(load_min, load_max)
-
+    #训练模型
     if args.model_name == "custom":
         model = CustomModel()
     elif args.model_name == "deepenergy":
@@ -39,13 +39,13 @@ def main(args):
         model = SeqMlp()
     else:
         raise ValueError("model name should be one of these 3 strings: 'custom', 'seqmlp', 'deepenergy'")
-
+    #优化器
     optim = tf.keras.optimizers.Adam()
     model.compile(loss="mae", metrics=["mape", mape, rmse], optimizer=optim)
-
+    #优化学习率+早停避免过拟合
     lr_reducer = tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", patience=3, verbose=1)
     early_stopper = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=6, verbose=1, restore_best_weights=True)
-
+    #在每个training/epoch/batch结束时，可以通过回调函数Callbacks查看一些内部信息。常用的callback有EarlyStopping等
     history = model.fit(train_dataset, validation_data=test_dataset, epochs=args.epochs, callbacks=[lr_reducer, early_stopper])
 
     
